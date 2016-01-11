@@ -1,0 +1,31 @@
+{
+    "name": "choult/enamel",
+    "description": "A machine learning library for PHP",
+    "homepage": "http://choult.com",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Christopher Hoult",
+            "email": "chris@choult.com"
+        }
+    ],
+    "require": {
+        "camspiers/porter-stemmer": "1.0.0"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "4.*",
+        "mockery/mockery": "0.9.*",
+        "squizlabs/php_codesniffer": "2.3.*",
+        "phpmd/phpmd" : "2.2.*",
+        "sebastian/phpcpd" : "2.0.*"
+    },
+    "autoload": {
+        "psr-4": {
+            "Choult\\Enamel\\": "src/",
+            "Choult\\Enamel\\Test\\": "test/unit"
+        }
+    },
+    "scripts": {
+        "test": "./vendor/bin/phpunit; ./vendor/bin/phpcs --standard=psr2 src test; ./vendor/bin/phpmd src,test text ./phpmd.xml.dist,unusedcode,design"
+    }
+}
