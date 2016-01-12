@@ -7,7 +7,7 @@ use \Choult\Enamel\Feature\Vector;
 use \Choult\Enamel\Classifier;
 use \Choult\Enamel\Document;
 
-class BernoulliNaiveBayes implements Classifier
+class MultiVariateNaiveBayes implements Classifier
 {
 
     private $extractor;
@@ -63,16 +63,7 @@ class BernoulliNaiveBayes implements Classifier
             $this->calculateModel();
         }
 
-        $base = array_fill_keys(array_keys($this->featureList), 0);
         $features = $this->extractor->extract($document);
-        array_walk(
-            $features,
-            function (&$item) {
-                $item = 1;
-            }
-        );
-
-        $features = array_merge($base, $features);
 
         $predictions = [];
         foreach (array_keys($this->model) as $tag) {
@@ -85,15 +76,17 @@ class BernoulliNaiveBayes implements Classifier
     private function predictTag($tag, array $features)
     {
         $score = log($this->tagCounts[$tag] / $this->docCount);
+        $featureCount = 1;
 
-        foreach ($this->model[$tag] as $feature => $probability) {
-            $score +=
-                ($features[$feature])
-                    ? log($probability)
-                    : log(1 - $probability);
+        foreach ($features as $feature => $count) {
+            if (isset($this->model[$tag][$feature])) {
+                $probability = $this->model[$tag][$feature];
+                $score += ($count * log($probability));
+                $featureCount += $count;
+            }
         }
 
-        return $score;
+        return $score / $featureCount;
     }
 
     private function calculateModel()
