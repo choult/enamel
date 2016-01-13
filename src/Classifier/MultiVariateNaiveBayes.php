@@ -6,6 +6,7 @@ use \Choult\Enamel\Feature\Extractor;
 use \Choult\Enamel\Feature\Vector;
 use \Choult\Enamel\Classifier;
 use \Choult\Enamel\Document;
+use \Choult\Enamel\Model;
 
 class MultiVariateNaiveBayes implements Classifier
 {
@@ -24,21 +25,17 @@ class MultiVariateNaiveBayes implements Classifier
 
     private $model;
 
-    public function __construct(Extractor $extractor)
+    public function __construct(Extractor $extractor, Model $model)
     {
         $this->extractor = $extractor;
+        $this->setModel($model);
     }
 
     /**
-     * Adds a Document to the Training set
-     *
-     * @param Document $document
-     *
-     * @return
+     * {@inheritdoc}
      */
     public function train(Document $document)
     {
-        $this->model = null;
         $this->docCount++;
         $features = $this->extractor->extract($document);
         $this->addFeatures($features);
@@ -51,36 +48,53 @@ class MultiVariateNaiveBayes implements Classifier
     }
 
     /**
-     * Gets a list of tags for the passed document
-     *
-     * @param Document $document
-     *
-     * @return array
+     * {@inheritdoc}
      */
     public function predict(Document $document)
     {
-        if ($this->model == null) {
-            $this->calculateModel();
+        if ($this->model->isEmpty()) {
+            $this->generateModel();
         }
 
         $features = $this->extractor->extract($document);
 
         $predictions = [];
-        foreach (array_keys($this->model) as $tag) {
-            $predictions[$tag] = $this->predictTag($tag, $features);
+        foreach ($this->model->getLabels() as $label) {
+            $predictions[$label] = $this->predictLabel($label, $features);
         }
 
         return $predictions;
     }
 
-    private function predictTag($tag, array $features)
+    /**
+     * {@inheritdoc}
+     */
+    public function setModel(Model $model)
     {
-        $score = log($this->tagCounts[$tag] / $this->docCount);
+        $this->model = $model;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getModel()
+    {
+        return $this->model;
+    }
+
+    /**
+     * @param $label
+     * @param array $features
+     * @return float
+     */
+    private function predictLabel($label, array $features)
+    {
+        $score = log($this->model->getLabelCount($label) / $this->model->getDocCount());
         $featureCount = 1;
 
         foreach ($features as $feature => $count) {
-            if (isset($this->model[$tag][$feature])) {
-                $probability = $this->model[$tag][$feature];
+            if ($this->model->labelModelsFeature($label, $feature)) {
+                $probability = $this->model->getLabelFeatureModel($label, $feature);
                 $score += ($count * log($probability));
                 $featureCount += $count;
             }
@@ -89,17 +103,19 @@ class MultiVariateNaiveBayes implements Classifier
         return $score / $featureCount;
     }
 
-    private function calculateModel()
+    public function generateModel()
     {
-        $this->model = [];
-        foreach ($this->tagFeatureList as $tag => $tagFeatures) {
+        $this->model->reset();
+        $cnt = 0;
+        foreach ($this->tagFeatureList as $label => $labelFeatures) {
             $model = array_fill_keys(array_keys($this->featureList), 0);
-            $model = array_merge($model, $tagFeatures);
+            $model = array_merge($model, $labelFeatures);
             foreach ($this->featureList as $feature => $count) {
-                $model[$feature] = ($model[$feature] + 1) / ($count + 2);
+                $model[$feature] = ($model[$feature] + 1) / ($count + 1);
             }
-            $this->model[$tag] = $model;
+            $this->model->setLabelModel($label, $this->tagCounts[$label], $model);
         }
+        $this->model->setDocCount($this->docCount);
     }
 
     private function addFeatures(array $features)

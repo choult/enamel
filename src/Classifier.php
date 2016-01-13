@@ -3,6 +3,7 @@
 namespace Choult\Enamel;
 
 use \Choult\Enamel\Document;
+use \Choult\Enamel\Model;
 
 /**
  * An interface to model a Classifier
@@ -32,4 +33,26 @@ interface Classifier
      */
     public function predict(Document $document);
 
+    /**
+     * Sets this Classifier's model
+     *
+     * @param Model $model
+     *
+     * @return mixed
+     */
+    public function setModel(Model $model);
+
+    /**
+     * Gets this Classifier's model
+     *
+     * @return mixed
+     */
+    public function getModel();
+
+    /**
+     * Calculates the model for this Classifier
+     *
+     * @return Model
+     */
+    public function generateModel();
 }
