@@ -23,6 +23,12 @@ class NGram implements Extractor
     private $caseSensitive = false;
     private $stopwords = [];
 
+    /**
+     * @param $key
+     * @param $stopwordFile
+     * @param int $gramLength
+     * @param bool|false $caseSensitive
+     */
     public function __construct($key, $stopwordFile, $gramLength = 1, $caseSensitive = false)
     {
         if (!is_integer($gramLength) || $gramLength < 1) {
@@ -59,7 +65,7 @@ class NGram implements Extractor
     protected function tokenize($str)
     {
         $str = str_replace('-', '', $str);
-        $str = preg_replace('[^A-z]', '', $str);
+        $str = preg_replace('/[^A-z]/', ' ', $str);
         return explode(' ', $str);
     }
 

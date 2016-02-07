@@ -26,6 +26,11 @@ class Model
      */
     private $model = [];
 
+    /**
+     * The total number of Documents that this model was trained with
+     *
+     * @var int
+     */
     private $docCount = 0;
 
     /**
@@ -121,6 +126,18 @@ class Model
     {
         $this->addLabel($label, $labelCount);
         $this->model[$label] = $model;
+    }
+
+    /**
+     * Sets the model for the passed label
+     *
+     * @param string $label
+     *
+     * @return array
+     */
+    public function getLabelModel($label)
+    {
+        return $this->model[$label];
     }
 
     /**

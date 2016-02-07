@@ -12,11 +12,15 @@ namespace Choult\Enamel;
 interface Document
 {
     /**
+     * Gets a list of labels describing this Document
+     *
      * @return array
      */
-    public function getTags();
+    public function getLabels();
 
     /**
+     * Gets the content of this Document to have features extracted from
+     *
      * @return string
      */
     public function getContent();
