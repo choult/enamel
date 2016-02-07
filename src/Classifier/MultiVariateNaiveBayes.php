@@ -96,7 +96,7 @@ class MultiVariateNaiveBayes implements Classifier
         $this->docCount++;
         $features = $this->extractor->extract($document);
         $this->addFeatures($features);
-        foreach ($document->getTags() as $label) {
+        foreach ($document->getLabels() as $label) {
             $this->labelCounts[$label] = (isset($this->labelCounts[$label])) ? $this->labelCounts[$label] + 1 : 1;
             $this->addLabelFeatures($label, $features);
         }
