@@ -49,8 +49,10 @@ class BernoulliMVNaiveBayes extends MultiVariateNaiveBayes
     /**
      * Generates a prediction for the given label
      *
-     * @param $label
-     * @param array $features
+     * @param string   $label
+     * @param array    $features
+     * @param boolean  $useLog
+     *
      * @return float
      */
     protected function predictLabel($label, array $features, $useLog)

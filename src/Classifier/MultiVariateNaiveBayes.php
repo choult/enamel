@@ -199,8 +199,8 @@ class MultiVariateNaiveBayes implements Classifier
     /**
      * Adds a list of features and their counts for a given label
      *
-     * @param $label
-     * @param array $features
+     * @param string  $label
+     * @param array   $features
      */
     protected function addLabelFeatures($label, array $features)
     {
