@@ -7,14 +7,23 @@ use \Choult\Enamel\Feature\Extractor;
 
 class Collection implements Extractor
 {
-
+    /** @var Extractor[] */
     private $extractors = [];
 
+    /**
+     * @param array  $extractors
+     */
     public function __construct(array $extractors)
     {
         $this->setExtractors($extractors);
     }
 
+
+    /**
+     * Sets the extractors.
+     *
+     * @param array  $extractors
+     */
     public function setExtractors(array $extractors)
     {
         $this->extractors = [];
@@ -23,6 +32,10 @@ class Collection implements Extractor
         }
     }
 
+
+    /**
+     * @param Extractor $extractor
+     */
     public function addExtractor(Extractor $extractor)
     {
         $this->extractors[] = $extractor;

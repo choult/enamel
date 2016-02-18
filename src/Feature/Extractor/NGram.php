@@ -62,6 +62,11 @@ class NGram implements Extractor
         return $result;
     }
 
+    /**
+     * @param string  $str
+     *
+     * @return array
+     */
     protected function tokenize($str)
     {
         $str = str_replace('-', '', $str);
@@ -69,6 +74,11 @@ class NGram implements Extractor
         return explode(' ', $str);
     }
 
+    /**
+     * @param array  $tokens
+     *
+     * @return array
+     */
     protected function removeStopwords(array &$tokens)
     {
         $stopwords = $this->getStopwords();
@@ -80,6 +90,9 @@ class NGram implements Extractor
         return $tokens;
     }
 
+    /**
+     * @return  string[]
+     */
     protected function getStopwords()
     {
         if (!$this->stopwords) {
@@ -90,6 +103,10 @@ class NGram implements Extractor
         return $this->stopwords;
     }
 
+    /**
+     * @param string[]  $tokens
+     * @return array
+     */
     protected function stem(array &$tokens)
     {
         foreach ($tokens as $idx => $token) {
